@@ -6,6 +6,9 @@ from users.serializers import UsuarioCreateSerializer, UsuarioSerializer
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from users.models import CandidatoPerfil, EmpregadorPerfil
+
+from django.db import transaction
 
 Usuario = get_user_model()
 
@@ -37,14 +40,15 @@ class UsuarioCreateView(generics.CreateAPIView):
     permission_classes = [AllowAny]
 
     def perform_create(self, serializer):
-        usuario = serializer.save()
+        with transaction.atomic():
+            usuario = serializer.save()
 
-        if usuario.tipo == 'empregador':
-            from users.models import EmpregadorPerfil
-            EmpregadorPerfil.objects.create(usuario=usuario)
-        elif usuario.tipo == 'candidato':
-            from users.models import CandidatoPerfil
-            CandidatoPerfil.objects.create(usuario=usuario)
+            if usuario.tipo == 'empregador':
+                if not EmpregadorPerfil.objects.filter(usuario=usuario).exists():
+                    EmpregadorPerfil.objects.create(usuario=usuario)
+            elif usuario.tipo == 'candidato':
+                if not CandidatoPerfil.objects.filter(usuario=usuario).exists():
+                    CandidatoPerfil.objects.create(usuario=usuario)
 
 
 class UsuarioDetailView(APIView):
