@@ -15,7 +15,12 @@ import os
 import dj_database_url
 from dotenv import load_dotenv
 
-load_dotenv()
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass  # em produção, variáveis de ambiente já estão no painel da Render
+
 from django.conf.global_settings import AUTH_USER_MODEL, STATIC_ROOT
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
