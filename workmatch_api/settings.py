@@ -13,6 +13,10 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 import os
 import dj_database_url
+from dotenv import load_dotenv
+
+load_dotenv()
+from django.conf.global_settings import AUTH_USER_MODEL, STATIC_ROOT
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +29,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-jhxk$rml4532ps--v$8kf#r7ou8ksogxs+py(2#qhqo-)$b)3@"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -42,8 +46,15 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'auth_app',
+    'users',
+    'vagas',
+    'candidaturas',
 
 ]
+
+AUTH_USER_MODEL = "users.Usuario"
+
+REQUIRED_FIELDS = ['email', 'nome_completo']
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -118,7 +129,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+STATIC_URL = "/static/"
+
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -128,5 +145,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.AllowAny',  # pode ajustar por view
+    ),
 }
+
