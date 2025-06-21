@@ -6,11 +6,13 @@ from vagas.views.vaga import (
     DetalharVagaView,
     VagasRecomendadasView
 )
+from views.vaga import VagasDisponiveisParaCandidatoView
 
 urlpatterns = [
     path('criar/', CriarVagaView.as_view(), name='criar-vaga'),
     path('', ListarTodasVagasView.as_view(), name='listar-vagas'),
     path('minhas/', ListarMinhasVagasView.as_view(), name='minhas-vagas'),
     path('<int:pk>/', DetalharVagaView.as_view(), name='detalhar-vaga'),
-    path('recomendadas/', VagasRecomendadasView.as_view(), name='vagas-recomendadas')
+    path('recomendadas/', VagasRecomendadasView.as_view(), name='vagas-recomendadas'),
+    path("disponiveis/", VagasDisponiveisParaCandidatoView.as_view(), name="vagas-disponiveis"),
 ]

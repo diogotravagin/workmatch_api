@@ -4,7 +4,8 @@ from rest_framework.permissions import IsAuthenticated
 from vagas.models.vaga import Vaga
 from vagas.serializers.vaga import VagaSerializer
 from rest_framework.response import Response
-from users.models import CandidatoPerfil, EmpregadorPerfil
+from users.models import CandidatoPerfil
+from candidaturas.models import Candidatura
 from rest_framework.views import APIView
 
 
@@ -58,4 +59,17 @@ class VagasRecomendadasView(APIView):
         # Lógica simples de recomendação (exemplo: todas as vagas por enquanto)
         vagas = (Vaga.objects.filter(ativa=True).order_by('-publicada_em'))
         serializer = VagaSerializer(vagas, many=True)
+        return Response(serializer.data)
+
+class VagasDisponiveisParaCandidatoView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        usuario = request.user
+
+        # Filtra vagas ativas que ainda não foram candidatas nem dispensadas
+        vagas_visualizadas = Candidatura.objects.filter(candidato=usuario).values_list('vaga_id', flat=True)
+        vagas = Vaga.objects.filter(ativa=True).exclude(id__in=vagas_visualizadas)
+
+        serializer = VagaSerializer(vagas, many=True, context={'request': request})
         return Response(serializer.data)
