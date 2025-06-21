@@ -6,7 +6,7 @@ from vagas.views.vaga import (
     DetalharVagaView,
     VagasRecomendadasView
 )
-from views.vaga import VagasDisponiveisParaCandidatoView
+from .views.vaga import VagasDisponiveisParaCandidatoView
 
 urlpatterns = [
     path('criar/', CriarVagaView.as_view(), name='criar-vaga'),
